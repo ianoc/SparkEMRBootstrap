@@ -158,15 +158,20 @@ EOF
 
 echo "Fetch and install scala version requested"
 mkdir -p debian/home/hadoop
-curl -O ${SCALA_HOST}/${SCALA_VERSION}.tgz
-tar zxvf ${SCALA_VERSION}.tgz
-mv ${SCALA_VERSION} scala
-rm ${SCALA_VERSION}.tgz
+SCALA_RLS_NAME=scala-${SCALA_VERSION}
+echo curl -O ${SCALA_HOST}/${SCALA_RLS_NAME}.tgz
+curl -O ${SCALA_HOST}/${SCALA_RLS_NAME}.tgz
+tar zxvf ${SCALA_RLS_NAME}.tgz
+mv ${SCALA_RLS_NAME} scala
+touch scala/${SCALA_VERSION}
+rm ${SCALA_RLS_NAME}.tgz
 
 echo "Build spark.."
 git clone https://github.com/mesos/spark debian/home/hadoop/spark
 cd debian/home/hadoop/spark
 git checkout $SPARK_VERSION
+touch $SPARK_VERSION
+rm -rf .git
 time sbt/sbt package
 
 cd $ORIG_DIR/work
