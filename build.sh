@@ -178,3 +178,4 @@ cd $ORIG_DIR/work
 
 dpkg-deb --build debian && mv debian.deb ${NAME}.deb
 
+rm -rf debian
