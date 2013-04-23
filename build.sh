@@ -3,13 +3,13 @@ source $ORIG_DIR/config.sh
 if [ -z $SPARK_VERSION ]
 then
     SPARK_VERSION="v0.7.0"
-    SCALA_VERSION="1.9.2"
+    SCALA_VERSION="2.9.2"
 fi
 
 
 if [ -z $SCALA_VERSION ]
 then
-    SCALA_VERSION="1.9.2"
+    SCALA_VERSION="2.9.2"
 fi
 
 if [ -z $NAME ]
@@ -158,13 +158,14 @@ EOF
 
 echo "Fetch and install scala version requested"
 mkdir -p debian/home/hadoop
+cd debian/home/hadoop
 SCALA_RLS_NAME=scala-${SCALA_VERSION}
-echo curl -O ${SCALA_HOST}/${SCALA_RLS_NAME}.tgz
 curl -O ${SCALA_HOST}/${SCALA_RLS_NAME}.tgz
 tar zxvf ${SCALA_RLS_NAME}.tgz
 mv ${SCALA_RLS_NAME} scala
 touch scala/${SCALA_VERSION}
 rm ${SCALA_RLS_NAME}.tgz
+cd $ORIG_DIR/work
 
 echo "Build spark.."
 git clone https://github.com/mesos/spark debian/home/hadoop/spark
@@ -178,4 +179,4 @@ cd $ORIG_DIR/work
 
 dpkg-deb --build debian && mv debian.deb ${NAME}.deb
 
-rm -rf debian
+rm -rf $ORIG_DIR/work/debian

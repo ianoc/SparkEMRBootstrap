@@ -46,6 +46,11 @@ fi
 sudo sed -i "s/master=/master=master@$MASTER:5050/" /usr/local/var/mesos/conf/mesos.conf
 ln -s /home/hadoop/.versions/0.20.205/conf/core-site.xml /home/hadoop/spark/conf/
 
+sudo chown hadoop:hadoop /etc/init.d/mesos-master.sh /etc/init.d/mesos-slave.sh
+sudo chmod a+rx /etc/init.d/mesos-master.sh /etc/init.d/mesos-slave.sh
+sudo chown hadoop:hadoop /usr/local/var/mesos/conf/mesos.conf
+sudo chmod u+rw /usr/local/var/mesos/conf/mesos.conf
+
 sudo chown -R hadoop:hadoop /home/hadoop/{scala,spark}
 grep -Fq '"isMaster":true' /mnt/var/lib/info/instance.json
 if [ $? -eq 0 ]; 
