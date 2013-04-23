@@ -1,0 +1,56 @@
+mkdir /tmp/deb
+cd /tmp/deb
+curl -O ${DEB_HOST}/${NAME}.deb
+
+sudo dpkg -i ${NAME}.deb
+sudo dpkg -i /tmp/mesos_0.9.0-1_amd64.deb
+
+sudo chown -R hadoop:hadoop /home/hadoop/{scala,spark}
+sudo ldconfig
+
+CPUS=`grep processor /proc/cpuinfo | wc -l`
+MEM_KB=`cat /proc/meminfo | grep MemTotal | awk '{print $2}'`
+MEM=$[(MEM_KB - 1024 * 1024) / 1024]
+MEMG=$[MEM / 1024]
+RESOURCES="cpus:$CPUS;mem:$MEM"
+MEM_SPARK=$[(MEM-500)]
+
+MASTER=$(grep -i "job.tracker<" /home/hadoop/conf/mapred-site.xml | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}')
+
+BASE_SPARK_CONF=$( cat <<EOF
+export MESOS_NATIVE_LIBRARY=/usr/local/lib/libmesos.so\n
+export SCALA_HOME=/home/hadoop/scala\n
+export SPARK_LIBRARY_PATH=/home/hadoop/native/Linux-amd64-64\n
+export SPARK_MEM=${MEM_SPARK}m\n
+export SPARK_HOME=/home/hadoop/spark\n
+export MASTER=master@${MASTER}:5050\n
+EOF
+)
+echo -e $BASE_SPARK_CONF > /home/hadoop/spark/conf/spark-env.sh
+echo -e $BASE_SPARK_CONF >> /home/hadoop/.bashrc
+
+sudo chown hadoop /usr/local/var/mesos/conf/mesos.conf
+echo "resources=$RESOURCES" >> /usr/local/var/mesos/conf/mesos.conf
+
+if [ -d "/mnt2" ]
+   then
+        echo "export SPARK_JAVA_OPTS=\"-Dspark.local.dir=/mnt1/spark,/mnt2/spark,/mnt3/spark -Dspark.kryoserializer.buffer.mb=10 -XX:+UseCompressedOops\"" >> /home/hadoop/spark/conf/spark-env.sh
+elif [ -d "/mnt/tmp" ]
+   then
+        echo "export SPARK_JAVA_OPTS=\"-Dspark.local.dir=/mnt/tmp -Dspark.kryoserializer.buffer.mb=10\"" >> /home/hadoop/spark/conf/spark-env.sh
+else
+        echo "export SPARK_JAVA_OPTS=\"-Dspark.local.dir=/tmp -Dspark.kryoserializer.buffer.mb=10\"" >> /home/hadoop/spark/conf/spark-env.sh
+fi
+
+
+sudo sed -i "s/master=/master=master@$MASTER:5050/" /usr/local/var/mesos/conf/mesos.conf
+ln -s /home/hadoop/.versions/0.20.205/conf/core-site.xml /home/hadoop/spark/conf/
+
+sudo chown -R hadoop:hadoop /home/hadoop/{scala,spark}
+grep -Fq '"isMaster":true' /mnt/var/lib/info/instance.json
+if [ $? -eq 0 ]; 
+then
+	/etc/init.d/mesos-master.sh start
+else
+	/etc/init.d/mesos-slave.sh start
+fi
