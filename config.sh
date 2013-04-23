@@ -1,1 +1,1 @@
-DEB_HOST=https://s3-us-west-2.amazonaws.com/knobout-us-west-2-static/serving
+DEB_HOST=YOUR S3 or HTTP HOST for the deb
