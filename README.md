@@ -27,3 +27,8 @@ To use:
    ssh -L5050:localhost:5050 hadoop@EMR_master
 * Tested with AMI's v 2.0 and 2.2
 
+
+
+#Sample remote deploy
+
+This is just a simple script that will copy over the code from the local workspace. Build an assembly jar on what is presumed to be your master node, and then run it in a screen session.
