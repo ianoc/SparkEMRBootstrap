@@ -23,7 +23,9 @@ export SCALA_HOME=/home/hadoop/scala\n
 export SPARK_LIBRARY_PATH=/home/hadoop/native/Linux-amd64-64\n
 export SPARK_MEM=${MEM_SPARK}m\n
 export SPARK_HOME=/home/hadoop/spark\n
+export LD_LIBRARY_PATH=/home/hadoop/.versions/0.20.205/native/Linux-amd64-64\n
 export MASTER=master@${MASTER}:5050\n
+export SPARK_CLASSPATH=\$SPARK_CLASSPATH:/home/hadoop/hadoop-core-0.20.205.jar:/home/hadoop/lib/aws-java-sdk-1.2.16.jar
 EOF
 )
 echo -e $BASE_SPARK_CONF > /home/hadoop/spark/conf/spark-env.sh

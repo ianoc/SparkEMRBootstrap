@@ -173,6 +173,8 @@ cd debian/home/hadoop/spark
 git checkout $SPARK_VERSION
 touch $SPARK_VERSION
 rm -rf .git
+cp project/SparkBuild.scala /tmp/
+cat /tmp/SparkBuild.scala | sed -e 's/\s*val HADOOP_VERSION.*/val HADOOP_VERSION="0.20.205.0"/g' > project/SparkBuild.scala
 time sbt/sbt package
 
 cd $ORIG_DIR/work
