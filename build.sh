@@ -2,14 +2,14 @@ ORIG_DIR="$( cd -P "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source $ORIG_DIR/config.sh
 if [ -z $SPARK_VERSION ]
 then
-    SPARK_VERSION="v0.7.0"
-    SCALA_VERSION="2.9.2"
+    SPARK_VERSION="v0.7.3"
+    SCALA_VERSION="2.9.3"
 fi
 
 
 if [ -z $SCALA_VERSION ]
 then
-    SCALA_VERSION="2.9.2"
+    SCALA_VERSION="2.9.3"
 fi
 
 if [ -z $NAME ]
